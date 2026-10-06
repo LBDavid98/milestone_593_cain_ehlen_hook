@@ -1,0 +1,7 @@
+data/raw/
+data/processed/*
+!data/processed/user_splits.pkl
+!data/processed/train_likes_per_work.pkl
+.ipynb_checkpoints/
+__pycache__/
+.DS_Store
