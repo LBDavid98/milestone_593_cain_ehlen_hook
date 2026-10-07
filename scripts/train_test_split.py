@@ -17,11 +17,6 @@ the model is shown and targets it must recover.
 Why hash rather than shuffle: a reader's split comes from a hash of their id and
 the seed, so it never changes when rows are reordered, filtered, or re-sampled.
 scripts/benchmark.py assigns its dev/test seed works the same way.
-
-Authorship: this module was authored by generative AI (Claude Code, Anthropic,
-2026-10-06) under David Hook's direction and reviewed by him, as the SIADS 593
-generative-AI policy requires. The prompts that produced it are recorded in
-AI_DISCLOSURE.md at the project root.
 """
 
 from __future__ import annotations

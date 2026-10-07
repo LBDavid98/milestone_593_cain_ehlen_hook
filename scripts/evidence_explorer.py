@@ -18,11 +18,6 @@ linked panels driven by one slider (the minimum number of likes a work needs):
 
 Only small pre-aggregated tables are embedded in the chart, so it stays light
 even though the sample has hundreds of thousands of works.
-
-Authorship: this module was authored by generative AI (Claude Code, Anthropic,
-2026-10-06) under David Hook's direction and reviewed by him, as the SIADS 593
-generative-AI policy requires. The prompts that produced it are recorded in
-AI_DISCLOSURE.md at the project root.
 """
 
 from __future__ import annotations

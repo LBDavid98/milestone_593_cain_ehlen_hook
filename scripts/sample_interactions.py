@@ -27,11 +27,6 @@ Sources (UCSD Goodreads datasets, Mengting Wan and Julian McAuley, 2017-2018):
         https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/book_id_map.csv
     goodreads_books.json.gz      one JSON record per edition, carries work_id
         https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/goodreads_books.json.gz
-
-Authorship: this module was authored by generative AI (Claude Code, Anthropic,
-2026-10-06) under David Hook's direction and reviewed by him, as the SIADS 593
-generative-AI policy requires. The prompts that produced it are recorded in
-AI_DISCLOSURE.md at the project root.
 """
 
 from __future__ import annotations

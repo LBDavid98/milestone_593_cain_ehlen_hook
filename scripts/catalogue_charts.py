@@ -4,10 +4,6 @@ Each function takes the data frame the notebook already has and returns an Altai
 so the notebook cell is one line and the chart's design decisions are documented here.
 
     concentration_curve(books)   Visualization 2: how few works hold most of the ratings
-
-Authorship: this module was authored by generative AI (Claude Code, Anthropic, 2026-10-06)
-under David Hook's direction and reviewed by him, as the SIADS 593 generative-AI policy
-requires. The prompts that produced it are recorded in AI_DISCLOSURE.md.
 """
 
 from __future__ import annotations

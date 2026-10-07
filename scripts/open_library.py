@@ -44,12 +44,6 @@ reached two ways, and the notebook uses both:
    The join key is the Goodreads book id. Open Library editions carry it under
    identifiers.goodreads, and the UCSD book dimension keeps each work's most-rated
    edition as canonical_book_id, so the two sources meet on an id both publish.
-
-Authorship: Section 1 is Sarah Ehlen's code, copied verbatim from her notebook
-data_manipulation_stage.ipynb. Section 2 and this docstring were authored by
-generative AI (Claude Code, Anthropic, 2026-10-06) under David Hook's direction and
-reviewed by him, as the SIADS 593 generative-AI policy requires. The prompts that
-produced them are recorded in AI_DISCLOSURE.md at the project root.
 """
 
 from __future__ import annotations

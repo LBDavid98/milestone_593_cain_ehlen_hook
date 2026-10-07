@@ -5,10 +5,6 @@ download URLs, target paths and expected sizes, so the notebook can print exact
 instructions and confirm what is present before any step runs.
 
     inventory(project_root)   one row per raw file: present?, size on disk, expected size
-
-Authorship: this module was authored by generative AI (Claude Code, Anthropic, 2026-10-06)
-under David Hook's direction and reviewed by him, as the SIADS 593 generative-AI policy
-requires. The prompts that produced it are recorded in AI_DISCLOSURE.md.
 """
 
 from __future__ import annotations

@@ -33,11 +33,6 @@ Transformation decisions, carried over from notebook 02 unchanged:
     4. Authors and series stay as lists; genre flattens to ten integer columns.
     5. Numbers arrive as strings and missing as ""; they become 0. Years keep their sign.
     6. Nothing is filtered: every work in the source survives.
-
-Authorship: this module was authored by generative AI (Claude Code, Anthropic,
-2026-10-06) under David Hook's direction and reviewed by him, as the SIADS 593
-generative-AI policy requires. It restates code David wrote in notebook 02. The
-prompts that produced it are recorded in AI_DISCLOSURE.md at the project root.
 """
 
 from __future__ import annotations
