@@ -27,7 +27,6 @@ bottom-right panel compares Goodreads' average rating (to 2017) with Open Librar
 | `data/samples/*.first100.csv` | the first 100 records of each output file over 10 MB (`book_dimension`, `interactions_sample_50k`, `open_library_match`) |
 | `docs/index.html` | the hosted explorer |
 | `requirements.txt` | pinned packages for the Python 3.10 environment the notebook ran in |
-| `AI_DISCLOSURE.md` | generative-AI disclosure with the prompts behind each module, as the course policy requires |
 
 ## Data
 
