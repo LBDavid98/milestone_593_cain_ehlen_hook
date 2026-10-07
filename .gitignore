@@ -10,3 +10,9 @@ data/processed/*
 .ipynb_checkpoints/
 __pycache__/
 .DS_Store
+
+# working material kept beside the repo, not part of the submission
+course/
+reports/
+presentation/
+staging/
