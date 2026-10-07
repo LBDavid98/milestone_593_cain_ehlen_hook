@@ -12,10 +12,9 @@ import altair as alt
 import numpy as np
 import pandas as pd
 
+from chart_theme import BLUE, BLUE_RAMP, FONT, INK, INK2, SURFACE, theme as _theme  # noqa: E402
+
 # Same palette and chrome as evidence_explorer.py so the notebook's charts read as one set.
-INK, INK2, GRID, AXIS, SURFACE = "#0b0b0b", "#52514e", "#e1e0d9", "#c3c2b7", "#fcfcfb"
-BLUE = "#2a78d6"
-FONT = 'system-ui, -apple-system, "Segoe UI", sans-serif'
 
 
 def concentration_curve(books: pd.DataFrame, points: int = 400) -> alt.LayerChart:
@@ -60,25 +59,10 @@ def concentration_curve(books: pd.DataFrame, points: int = 400) -> alt.LayerChar
                                            font=FONT).encode(
         x=x, y=y, text="label:N")
 
-    return (alt.layer(line, marks, labels)
-            .properties(width=620, height=300,
-                        title=alt.TitleParams("A small share of works holds most of the ratings",
-                                              subtitle=f"{n:,} works ranked by Goodreads ratings count"))
-            .configure(background=SURFACE, font=FONT)
-            .configure_view(stroke=None)
-            .configure_axis(gridColor=GRID, domainColor=AXIS, tickColor=AXIS, labelColor=INK2, titleColor=INK2,
-                            labelFontSize=11, titleFontSize=12, titleFontWeight="normal")
-            .configure_title(color=INK, subtitleColor=INK2, fontSize=14, subtitleFontSize=11.5, anchor="start"))
-
-
-def _theme(chart):
-    """Shared quiet chrome for the static charts."""
-    return (chart.configure(background=SURFACE, font=FONT)
-            .configure_view(stroke=None)
-            .configure_axis(gridColor=GRID, domainColor=AXIS, tickColor=AXIS, labelColor=INK2, titleColor=INK2,
-                            labelFontSize=11, titleFontSize=12, titleFontWeight="normal")
-            .configure_title(color=INK, subtitleColor=INK2, fontSize=14, subtitleFontSize=11.5, anchor="start")
-            .configure_legend(labelColor=INK2, titleColor=INK2))
+    return _theme(alt.layer(line, marks, labels).properties(
+        width=620, height=300,
+        title=alt.TitleParams("A small share of works holds most of the ratings",
+                              subtitle=f"{n:,} works ranked by Goodreads ratings count")))
 
 
 LIKE_BANDS = [(1, 1, "1"), (2, 4, "2-4"), (5, 9, "5-9"), (10, 24, "10-24"), (25, 99, "25-99"), (100, None, "100+")]
@@ -139,8 +123,8 @@ def rating_agreement_chart(books_ol: pd.DataFrame, min_ol_ratings: int = 5) -> a
         x2="gx2:Q",
         y=alt.Y("oy:Q", scale=alt.Scale(domain=[1, 5]), title="Open Library average rating (2026 dump)"),
         y2="oy2:Q",
-        color=alt.Color("works:Q", scale=alt.Scale(type="log", range=["#cde2fb", "#0d366b"]),
-                        legend=alt.Legend(title="Works", orient="right", format="~s")),
+        color=alt.Color("works:Q", scale=alt.Scale(type="log", range=BLUE_RAMP),
+                        legend=alt.Legend(title="Works", orient="bottom", direction="horizontal", format="~s")),
         tooltip=[alt.Tooltip("works:Q", title="Works", format=","),
                  alt.Tooltip("gx:Q", title="Goodreads", format=".1f"),
                  alt.Tooltip("oy:Q", title="Open Library", format=".1f")])

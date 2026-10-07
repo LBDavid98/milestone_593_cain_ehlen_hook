@@ -2,50 +2,59 @@
 
 SIADS 593 Milestone I, Fall 2026 · Olivia Cain · Sarah Ehlen · David Hook
 
-This repository holds **Book 1 — Data Exploration, Cleaning, and Analysis**, the first of the
-project's three notebooks, with the Python modules it calls and the small data files the course
-asks us to include. Books 2 (Modeling and Model Evaluation) and 3 (Ranked Fusion Recommender)
-will be added as they are finished.
+A book recommender built from Goodreads reading histories: given a book a reader enjoyed, it
+returns five books that readers with similar histories also enjoyed. The work is presented in three
+Jupyter notebooks, run in order, with the Python modules they call and the small data files the
+course asks us to include.
 
 ## Interactive explorer
 
 **https://lbdavid98.github.io/milestone_593_cain_ehlen_hook/**
 
-Visualization 1 from the notebook, hosted as a page: every work liked by a training reader, placed
-by how many readers liked it and what share of its raters gave it 4–5 stars. Drag the slider to set
-a minimum-likes floor, click a genre, type a title, hover for the books behind each cell. The
+Visualization 1 from Book 1, hosted as a page: every work liked by a training reader, placed by how
+many readers liked it and what share of its raters gave it 4–5 stars. Drag the slider to set a
+minimum-likes floor, click a genre, type a title, hover for the books behind each cell. The
 bottom-right panel compares Goodreads' average rating (to 2017) with Open Library's (2026).
 
-## What is here
+## The notebooks
+
+| Notebook | What it does | Main outputs |
+|---|---|---|
+| `Book 1 - Data Exploration, Cleaning, and Analysis.ipynb` | Sources and download instructions; UCSD book metadata collapsed from editions to works; a 50,000-reader sample of the interactions at work level; a train/validation/test split by reader; the minimum-evidence decision; the Open Library join through the Goodreads id | `book_dimension.pkl`, `interactions_sample_50k.pkl`, `user_splits.pkl`, `train_likes_per_work.pkl`, `open_library_match.pkl` |
+| `Book 2 - Modeling and Model Evaluation.ipynb` | Three recommenders built from one co-occurrence engine on the training readers: a directional score and a Jaccard score on likes, and a Jaccard score on books readers finished; verification of the fast implementations against the reference functions; baselines; evaluation on held-out readers and against Goodreads' own lists | `neighbours_*.pkl` (60 ranked neighbours per work, per model), `book2_test_results.pkl` |
+| `Book 3 - Ranked Fusion Recommender.ipynb` | The three models' top-five lists combined with reciprocal rank fusion; tuning on validation readers; the fused recommender against the single models and baselines on test readers; the project's `recommend(work_id, n=5)` function | `book3_test_results.pkl`, `book3_validation_results.pkl`, `book3_agreement.pkl`, `book3_weight_grid.pkl` |
+
+## Repository layout
 
 | Path | Contents |
 |---|---|
-| `Book 1 - Data Exploration, Cleaning, and Analysis.ipynb` | the executed notebook (outputs included) |
-| `scripts/` | the seven modules the notebook calls: `data_sources`, `book_dimension`, `sample_interactions`, `train_test_split`, `evidence_explorer`, `catalogue_charts`, `open_library` |
-| `data/processed/user_splits.pkl` | train / validation / test assignment for the 50,000 sampled readers (seed 593) |
-| `data/processed/train_likes_per_work.pkl` | likes per work among training readers; the recommendable floor is applied from it |
-| `data/samples/*.first100.csv` | the first 100 records of each output file over 10 MB (`book_dimension`, `interactions_sample_50k`, `open_library_match`) |
-| `docs/index.html` | the hosted explorer |
-| `requirements.txt` | pinned packages for the Python 3.10 environment the notebook ran in |
+| `scripts/` | The modules the notebooks call. Book 1: `data_sources`, `book_dimension`, `sample_interactions`, `train_test_split`, `evidence_explorer`, `catalogue_charts`, `open_library`. Book 2: `cooccurrence`, `likes_models` (with `likes_models_discussion.json`), `finished_together`, `evaluation`, `model_charts`. Book 3: `fusion`, `fusion_charts`, `rank_fusion`. Shared: `chart_theme` |
+| `data/processed/` | Outputs under 10 MB: the reader split, training likes per work, and the Book 2 and Book 3 result tables |
+| `data/samples/` | The first 100 records of each output over 10 MB: `book_dimension`, `interactions_sample_50k`, `open_library_match`, and the first 100 works of each neighbour table |
+| `docs/index.html` | The hosted explorer |
+| `requirements.txt` | Pinned packages for the Python 3.10 environment the notebooks ran in |
 
 ## Data
 
-The raw files (about 23 GB) are not in the repository. Section 1 of the notebook lists every
-download URL, the path to save each file at, and its expected size, and checks what is present.
-The three large processed files are not included either; running the notebook against the raw
-downloads produces them (the first full run takes about eight minutes, later runs under two).
+The raw files (about 23 GB) are not in the repository. Section 1 of Book 1 lists every download URL,
+the path to save each file at and its expected size, and checks what is present. Processed files over
+10 MB are not included either; running the notebooks in order produces them. Book 1's first full run
+takes about eight minutes and later runs under two; Books 2 and 3 take a few minutes each on the first
+run and about a minute afterwards, because every expensive step saves a `.pkl` and loads it when
+present.
 
-Sources: UCSD Goodreads datasets (interactions, book metadata, genres, authors, series;
+Sources: the UCSD Goodreads datasets (interactions, book metadata, genres, authors, series;
 `https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/`) and the Open Library data dumps of
-2026-09-30 (`https://openlibrary.org/developers/dumps`). Open Library's API is described in the
-notebook and in `scripts/open_library.py` but is not called by the notebook.
+2026-09-30 (`https://openlibrary.org/developers/dumps`). Open Library's API is described in Book 1 and
+in `scripts/open_library.py` but is not called by the notebooks.
 
-## Running the notebook
+## Running the notebooks
 
 ```
 python3.10 -m pip install -r requirements.txt
 python3.10 -m ipykernel install --user --name python310 --display-name "Python 3.10 (milestone1)"
 ```
 
-Place the raw files as Section 1 describes, open the notebook with that kernel, and run all cells.
-Every expensive step writes a `.pkl` under `data/processed/` and loads it on later runs.
+Place the raw files as Book 1's Section 1 describes, open the notebooks with that kernel from the
+repository root, and run Book 1, Book 2 and Book 3 in order. Every random choice uses seed 593, so a
+re-run draws the same readers and assigns them to the same splits.

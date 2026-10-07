@@ -26,6 +26,9 @@ import altair as alt
 import numpy as np
 import pandas as pd
 
+from chart_theme import (AQUA, AXIS, BLUE, BLUE_RAMP, FONT, INK, INK2, ORANGE, ORANGE_INK, SURFACE,
+                         theme as _apply_theme)
+
 # ----------------------------------------------------------------------------- settings
 LIKE_RATINGS = (4, 5)          # a "like" is a 4 or 5 star rating
 DEFAULT_FLOOR = 10             # where the slider starts
@@ -44,12 +47,7 @@ NO_GENRE = "No genre label"
 
 # Palette: a single blue ramp for "how many works", orange only for search hits,
 # and three categorical slots for the cost lines (validated colour-blind safe as a set).
-INK, INK2, MUTED, GRID, AXIS, SURFACE = "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7", "#fcfcfb"
 LOG_TICKS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000]
-BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
-ORANGE_INK = "#b84a1e"                                   # darker orange for text beside orange marks
-BLUE_RAMP = ["#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]   # sequential: light = few, dark = many
-FONT = 'system-ui, -apple-system, "Segoe UI", sans-serif'
 W_MAIN, W_SIDE, H_TOP, H_BOTTOM = 560, 215, 320, 185   # fits a notebook output cell
 
 
@@ -414,17 +412,6 @@ def _book_tooltips():
             alt.Tooltip("rated:Q", title="Readers who rated it", format=","),
             alt.Tooltip("like_share:Q", title="Share giving 4-5 stars", format=".0%"),
             alt.Tooltip("gr_rating:Q", title="Goodreads average", format=".2f")]
-
-
-def _apply_theme(chart):
-    """Quiet chrome: hairline grid, muted axis ink, system font, light surface."""
-    return (chart.configure(background=SURFACE, font=FONT, padding=24)
-            .configure_view(stroke=None)
-            .configure_axis(gridColor=GRID, domainColor=AXIS, tickColor=AXIS, labelColor=INK2, titleColor=INK2,
-                            labelFontSize=11, titleFontSize=12, titleFontWeight="normal", titlePadding=8)
-            .configure_title(color=INK, subtitleColor=INK2, fontSize=14, subtitleFontSize=11.5,
-                             anchor="start", offset=10)
-            .configure_legend(labelColor=INK2, titleColor=INK2, labelFontSize=11, titleFontSize=11))
 
 
 def save_explorer_html(chart, path: str) -> None:
