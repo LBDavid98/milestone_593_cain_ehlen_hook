@@ -2,6 +2,11 @@ data/raw/
 data/processed/*
 !data/processed/user_splits.pkl
 !data/processed/train_likes_per_work.pkl
+!data/processed/book2_test_results.pkl
+!data/processed/book3_test_results.pkl
+!data/processed/book3_validation_results.pkl
+!data/processed/book3_agreement.pkl
+!data/processed/book3_weight_grid.pkl
 .ipynb_checkpoints/
 __pycache__/
 .DS_Store
