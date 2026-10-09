@@ -18,7 +18,7 @@ rewards works that several models return.
 
 `per_model=5` is the agreed interface: every model contributes its top five. Deeper inputs
 (10, 20, 60 per model) are evaluated only to show what the agreement rule does with more
-candidates; the agreed setting stays the primary recommender.
+candidates. Book 3's recommender fuses the two Jaccard tables; the three-model fusion is its comparison.
 """
 
 from __future__ import annotations
