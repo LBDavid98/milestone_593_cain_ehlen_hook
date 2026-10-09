@@ -44,19 +44,34 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-TOTAL_BOOKS = 2_360_655          # editions in goodreads_books.json.gz
+TOTAL_BOOKS = 2_360_655  # editions in goodreads_books.json.gz
 ENGLISH_VARIANTS = {"en", "en-US", "en-GB", "en-CA", "en-IN"}
 
 # The genre file labels each edition with up to ten weighted genres. The labels are
 # flattened to ten integer columns, 0 meaning the label is absent.
 GENRE_LABELS = [
-    "children", "comics, graphic", "fantasy, paranormal", "fiction",
-    "history, historical fiction, biography", "mystery, thriller, crime",
-    "non-fiction", "poetry", "romance", "young-adult",
+    "children",
+    "comics, graphic",
+    "fantasy, paranormal",
+    "fiction",
+    "history, historical fiction, biography",
+    "mystery, thriller, crime",
+    "non-fiction",
+    "poetry",
+    "romance",
+    "young-adult",
 ]
 GENRE_COLUMNS = [
-    "g_children", "g_comics", "g_fantasy", "g_fiction", "g_history",
-    "g_mystery", "g_nonfiction", "g_poetry", "g_romance", "g_youngadult",
+    "g_children",
+    "g_comics",
+    "g_fantasy",
+    "g_fiction",
+    "g_history",
+    "g_mystery",
+    "g_nonfiction",
+    "g_poetry",
+    "g_romance",
+    "g_youngadult",
 ]
 SUMMED_ACROSS_EDITIONS = ["ratings_count", "text_reviews_count"]
 
@@ -111,8 +126,9 @@ def load_author_and_series_names(raw_dir) -> dict:
     return {"authors": author_name_by_id, "series": series_title_by_id}
 
 
-def read_editions_with_genres(raw_dir, names: dict, total_books: int = TOTAL_BOOKS,
-                              log=print) -> pd.DataFrame:
+def read_editions_with_genres(
+    raw_dir, names: dict, total_books: int = TOTAL_BOOKS, log=print
+) -> pd.DataFrame:
     """Read the books and genre files side by side into one row per edition.
 
     The two files have the same row count and order, so they are streamed together;
@@ -127,18 +143,40 @@ def read_editions_with_genres(raw_dir, names: dict, total_books: int = TOTAL_BOO
     # memory, and the dtypes chosen here (int16 for counts and years, float32 for the
     # rating) are what the saved table carries.
     number_columns = {}
-    for column_name in ["book_id", "work_id", "ratings_count", "text_reviews_count", "desc_len"]:
+    for column_name in [
+        "book_id",
+        "work_id",
+        "ratings_count",
+        "text_reviews_count",
+        "desc_len",
+    ]:
         number_columns[column_name] = np.zeros(total_books, dtype=np.int32)
-    for column_name in ["pub_year", "num_pages", "n_similar", "n_shelves"] + GENRE_COLUMNS:
+    for column_name in [
+        "pub_year",
+        "num_pages",
+        "n_similar",
+        "n_shelves",
+    ] + GENRE_COLUMNS:
         number_columns[column_name] = np.zeros(total_books, dtype=np.int16)
     number_columns["avg_rating"] = np.zeros(total_books, dtype=np.float32)
     number_columns["is_ebook"] = np.zeros(total_books, dtype=bool)
     number_columns["has_isbn"] = np.zeros(total_books, dtype=bool)
 
-    text_fields = ["title", "title_without_series", "language_code", "country_code",
-                   "isbn", "isbn13", "image_url", "link"]
-    text_columns = {column_name: [] for column_name in
-                    text_fields + ["author_ids", "author_names", "series_ids", "series_names"]}
+    text_fields = [
+        "title",
+        "title_without_series",
+        "language_code",
+        "country_code",
+        "isbn",
+        "isbn13",
+        "image_url",
+        "link",
+    ]
+    text_columns = {
+        column_name: []
+        for column_name in text_fields
+        + ["author_ids", "author_names", "series_ids", "series_names"]
+    }
 
     books = read_json_lines(raw_dir / BOOKS_FILE)
     genres = read_json_lines(raw_dir / GENRES_FILE)
@@ -147,7 +185,9 @@ def read_editions_with_genres(raw_dir, names: dict, total_books: int = TOTAL_BOO
 
     for book, genre in zip(books, genres):
         if row_number >= total_books:
-            raise ValueError(f"the books file has more than {total_books:,} rows; raise total_books")
+            raise ValueError(
+                f"the books file has more than {total_books:,} rows; raise total_books"
+            )
         if book["book_id"] != genre["book_id"]:
             # the two files are documented as parallel; a mismatch is counted and the
             # edition keeps no genre rather than someone else's (the full files report 0)
@@ -156,16 +196,32 @@ def read_editions_with_genres(raw_dir, names: dict, total_books: int = TOTAL_BOO
 
         number_columns["book_id"][row_number] = to_whole_number(book["book_id"])
         number_columns["work_id"][row_number] = to_whole_number(book["work_id"])
-        number_columns["ratings_count"][row_number] = to_whole_number(book["ratings_count"])
-        number_columns["text_reviews_count"][row_number] = to_whole_number(book["text_reviews_count"])
-        number_columns["desc_len"][row_number] = len(book["description"])      # description itself is dropped
-        number_columns["pub_year"][row_number] = fit_year_in_small_integer(to_whole_number(book["publication_year"]))
-        number_columns["num_pages"][row_number] = fit_in_small_integer(to_whole_number(book["num_pages"]))
-        number_columns["n_similar"][row_number] = fit_in_small_integer(len(book["similar_books"]))  # list -> count
-        number_columns["n_shelves"][row_number] = fit_in_small_integer(len(book["popular_shelves"]))  # list -> count
+        number_columns["ratings_count"][row_number] = to_whole_number(
+            book["ratings_count"]
+        )
+        number_columns["text_reviews_count"][row_number] = to_whole_number(
+            book["text_reviews_count"]
+        )
+        number_columns["desc_len"][row_number] = len(
+            book["description"]
+        )  # description itself is dropped
+        number_columns["pub_year"][row_number] = fit_year_in_small_integer(
+            to_whole_number(book["publication_year"])
+        )
+        number_columns["num_pages"][row_number] = fit_in_small_integer(
+            to_whole_number(book["num_pages"])
+        )
+        number_columns["n_similar"][row_number] = fit_in_small_integer(
+            len(book["similar_books"])
+        )  # list -> count
+        number_columns["n_shelves"][row_number] = fit_in_small_integer(
+            len(book["popular_shelves"])
+        )  # list -> count
         number_columns["avg_rating"][row_number] = float(book["average_rating"] or 0)
         number_columns["is_ebook"][row_number] = book["is_ebook"] == "true"
-        number_columns["has_isbn"][row_number] = bool(book["isbn"]) or bool(book["isbn13"])
+        number_columns["has_isbn"][row_number] = bool(book["isbn"]) or bool(
+            book["isbn13"]
+        )
 
         for label, column_name in zip(GENRE_LABELS, GENRE_COLUMNS):
             weight = genre["genres"].get(label)
@@ -194,13 +250,28 @@ def read_editions_with_genres(raw_dir, names: dict, total_books: int = TOTAL_BOO
             log(f"{row_number:,} books read")
 
     if log:
-        log(f"finished: {row_number:,} books; rows where the genre file did not line up: {mismatched_rows:,}")
+        log(
+            f"finished: {row_number:,} books; rows where the genre file did not line up: {mismatched_rows:,}"
+        )
 
     # a cut-down file leaves unused rows at the end of the arrays; trim them
-    editions = pd.DataFrame({name: values[:row_number] for name, values in number_columns.items()})
-    for column_name in ["title", "title_without_series", "author_ids", "author_names",
-                        "series_ids", "series_names", "isbn", "isbn13", "image_url", "link",
-                        "language_code", "country_code"]:
+    editions = pd.DataFrame(
+        {name: values[:row_number] for name, values in number_columns.items()}
+    )
+    for column_name in [
+        "title",
+        "title_without_series",
+        "author_ids",
+        "author_names",
+        "series_ids",
+        "series_names",
+        "isbn",
+        "isbn13",
+        "image_url",
+        "link",
+        "language_code",
+        "country_code",
+    ]:
         editions[column_name] = text_columns[column_name]
     return editions
 
@@ -211,7 +282,8 @@ def fold_english_language_codes(editions: pd.DataFrame) -> pd.DataFrame:
     # regional variant; folding them first keeps the language filter honest downstream.
     editions = editions.copy()
     editions["language_code"] = editions["language_code"].replace(
-        {variant: "eng" for variant in ENGLISH_VARIANTS})
+        {variant: "eng" for variant in ENGLISH_VARIANTS}
+    )
     return editions
 
 
@@ -223,7 +295,9 @@ def collapse_editions_to_works(editions: pd.DataFrame) -> pd.DataFrame:
     # blend of editions that never existed. n_shelves and n_similar come along as they are:
     # both are capped per edition (100 shelves, 18 similar books), so summing them across
     # editions would produce a number with no meaning.
-    ordered = editions.sort_values(["work_id", "ratings_count", "book_id"], ascending=[True, False, True])
+    ordered = editions.sort_values(
+        ["work_id", "ratings_count", "book_id"], ascending=[True, False, True]
+    )
     canonical = ordered.groupby("work_id", sort=True).head(1).set_index("work_id")
 
     # Counts that are true totals (ratings, text reviews) ARE summed across editions, so
@@ -232,7 +306,9 @@ def collapse_editions_to_works(editions: pd.DataFrame) -> pd.DataFrame:
     # mean Goodreads would show if the editions had been one listing.
     grouped = editions.groupby("work_id", sort=True)
     summed = grouped[SUMMED_ACROSS_EDITIONS].sum()
-    weighted_rating = editions["avg_rating"].astype(np.float64) * editions["ratings_count"]
+    weighted_rating = (
+        editions["avg_rating"].astype(np.float64) * editions["ratings_count"]
+    )
     weighted_total = weighted_rating.groupby(editions["work_id"], sort=True).sum()
 
     books = canonical.drop(columns=SUMMED_ACROSS_EDITIONS).copy()
@@ -252,21 +328,31 @@ def collapse_editions_to_works(editions: pd.DataFrame) -> pd.DataFrame:
         books[column_name] = pd.Categorical(books[column_name])
 
     assert books["work_id"].is_unique
-    assert books["ratings_count"].sum() == editions["ratings_count"].sum(), "ratings must be preserved exactly"
+    assert books["ratings_count"].sum() == editions["ratings_count"].sum(), (
+        "ratings must be preserved exactly"
+    )
     return books
 
 
-def build_book_dimension(raw_dir, total_books: int = TOTAL_BOOKS, log=print) -> pd.DataFrame:
+def build_book_dimension(
+    raw_dir, total_books: int = TOTAL_BOOKS, log=print
+) -> pd.DataFrame:
     """Run the whole build: names, editions, language fold, collapse to works."""
     names = load_author_and_series_names(raw_dir)
     if log:
-        log(f"author names {len(names['authors']):,}; series titles {len(names['series']):,}")
-    editions = read_editions_with_genres(raw_dir, names, total_books=total_books, log=log)
+        log(
+            f"author names {len(names['authors']):,}; series titles {len(names['series']):,}"
+        )
+    editions = read_editions_with_genres(
+        raw_dir, names, total_books=total_books, log=log
+    )
     editions = fold_english_language_codes(editions)
     books = collapse_editions_to_works(editions)
     if log:
-        log(f"editions in {len(editions):,}; works out {len(books):,} "
-            f"({1 - len(books) / len(editions):.1%} collapsed); columns {books.shape[1]}")
+        log(
+            f"editions in {len(editions):,}; works out {len(books):,} "
+            f"({1 - len(books) / len(editions):.1%} collapsed); columns {books.shape[1]}"
+        )
     return books
 
 
@@ -277,7 +363,9 @@ def save_book_dimension(books: pd.DataFrame, path) -> None:
     books.to_pickle(path)
 
 
-def load_or_build_book_dimension(raw_dir, path, rebuild: bool = False, log=print) -> pd.DataFrame:
+def load_or_build_book_dimension(
+    raw_dir, path, rebuild: bool = False, log=print
+) -> pd.DataFrame:
     """Load the saved book dimension, or build and save it when the file is missing.
 
     rebuild=True ignores the saved file and runs the build again (one to two minutes on a laptop,
@@ -304,7 +392,7 @@ def read_first_record(books_json_gz_path) -> dict:
     raise ValueError(f"{books_json_gz_path} is empty")
 
 
-USED_COLUMNS = {   # every column the three notebooks read, with what each is for
+USED_COLUMNS = {  # every column the three notebooks read, with what each is for
     "work_id": "key; joins to interactions, similar_books and the Open Library match (Books 1-3)",
     "canonical_book_id": "Goodreads edition id of the most-rated edition; the Open Library join key (Book 1)",
     "title": "shown in explorer tooltips and recommendation lists (Books 1-3)",
@@ -321,21 +409,45 @@ USED_COLUMNS = {   # every column the three notebooks read, with what each is fo
 def describe_schema(books: pd.DataFrame, used: dict = USED_COLUMNS) -> pd.DataFrame:
     """The columns the project reads, one row each, then the ten genre columns as one row and
     the remaining columns as one row. Replaces a 34-row dtype dump."""
-    example = books.loc[books["ratings_count"].idxmax()]      # the most-rated work makes a readable example
-    rows = [{"column": c, "dtype": str(books[c].dtype), "example": str(example[c])[:40], "used for": why}
-            for c, why in used.items() if c in books.columns]
+    example = books.loc[
+        books["ratings_count"].idxmax()
+    ]  # the most-rated work makes a readable example
+    rows = [
+        {
+            "column": c,
+            "dtype": str(books[c].dtype),
+            "example": str(example[c])[:40],
+            "used for": why,
+        }
+        for c, why in used.items()
+        if c in books.columns
+    ]
     genres = [c for c in books.columns if c.startswith("g_")]
-    rows.append({"column": f"{genres[0]} ... {genres[-1]} ({len(genres)} columns)",
-                 "dtype": str(books[genres[0]].dtype),
-                 "example": "0 = label absent", "used for": "top genre in the explorer; genre similarity (Books 1-2)"})
+    rows.append(
+        {
+            "column": f"{genres[0]} ... {genres[-1]} ({len(genres)} columns)",
+            "dtype": str(books[genres[0]].dtype),
+            "example": "0 = label absent",
+            "used for": "top genre in the explorer; genre similarity (Books 1-2)",
+        }
+    )
     rest = [c for c in books.columns if c not in used and c not in genres]
-    rows.append({"column": f"{len(rest)} other columns", "dtype": "", "example": "",
-                 "used for": "carried but not read by the notebooks: " + ", ".join(rest)})
+    rows.append(
+        {
+            "column": f"{len(rest)} other columns",
+            "dtype": "",
+            "example": "",
+            "used for": "carried but not read by the notebooks: " + ", ".join(rest),
+        }
+    )
     return pd.DataFrame(rows).set_index("column")
 
 
-def collapse_summary(books: pd.DataFrame, editions_in_source: int = TOTAL_BOOKS,
-                     ratings_in_source: int = 958_938_616) -> pd.DataFrame:
+def collapse_summary(
+    books: pd.DataFrame,
+    editions_in_source: int = TOTAL_BOOKS,
+    ratings_in_source: int = 958_938_616,
+) -> pd.DataFrame:
     """Before/after accounting for the edition-to-work collapse.
 
     The source figures are the counts notebook 02 measured when it read every edition
@@ -345,14 +457,33 @@ def collapse_summary(books: pd.DataFrame, editions_in_source: int = TOTAL_BOOKS,
     """
     ratings_after = int(books["ratings_count"].sum())
     memory_gb = books.memory_usage(deep=True).sum() / 1e9
-    return pd.DataFrame([
-        {"measure": "rows", "source (editions)": f"{editions_in_source:,}",
-         "book dimension (works)": f"{len(books):,}", "note": f"{1 - len(books) / editions_in_source:.1%} fewer rows"},
-        {"measure": "columns", "source (editions)": "29 (+10 genre weights)",
-         "book dimension (works)": str(books.shape[1]), "note": "7 dropped, lists kept, genres flattened"},
-        {"measure": "ratings counted", "source (editions)": f"{ratings_in_source:,}",
-         "book dimension (works)": f"{ratings_after:,}",
-         "note": "preserved exactly" if ratings_after == ratings_in_source else "MISMATCH: investigate"},
-        {"measure": "in memory", "source (editions)": "2.34 GB", "book dimension (works)": f"{memory_gb:.2f} GB",
-         "note": ""},
-    ]).set_index("measure")
+    return pd.DataFrame(
+        [
+            {
+                "measure": "rows",
+                "source (editions)": f"{editions_in_source:,}",
+                "book dimension (works)": f"{len(books):,}",
+                "note": f"{1 - len(books) / editions_in_source:.1%} fewer rows",
+            },
+            {
+                "measure": "columns",
+                "source (editions)": "29 (+10 genre weights)",
+                "book dimension (works)": str(books.shape[1]),
+                "note": "7 dropped, lists kept, genres flattened",
+            },
+            {
+                "measure": "ratings counted",
+                "source (editions)": f"{ratings_in_source:,}",
+                "book dimension (works)": f"{ratings_after:,}",
+                "note": "preserved exactly"
+                if ratings_after == ratings_in_source
+                else "MISMATCH: investigate",
+            },
+            {
+                "measure": "in memory",
+                "source (editions)": "2.34 GB",
+                "book dimension (works)": f"{memory_gb:.2f} GB",
+                "note": "",
+            },
+        ]
+    ).set_index("measure")

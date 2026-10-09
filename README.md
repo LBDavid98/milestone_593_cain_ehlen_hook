@@ -7,6 +7,9 @@ returns five books that readers with similar histories also enjoyed. The work is
 Jupyter notebooks, run in order, with the Python modules they call and the small data files the
 course asks us to include.
 
+The project report is `02-scehlen-hookds-ohope_2026fall.pdf` (11 pages: the report on pages 1–10,
+references and the statement of work on page 11).
+
 ## Interactive explorer
 
 **https://lbdavid98.github.io/milestone_593_cain_ehlen_hook/**
@@ -30,9 +33,32 @@ bottom-right panel compares Goodreads' average rating (to 2017) with Open Librar
 |---|---|
 | `scripts/` | The modules the notebooks call. Book 1: `data_sources`, `book_dimension`, `sample_interactions`, `train_test_split`, `evidence_explorer`, `catalogue_charts`, `open_library`. Book 2: `cooccurrence`, `likes_models` (with `likes_models_discussion.json`), `finished_together`, `evaluation`, `model_charts`. Book 3: `fusion`, `fusion_charts`, `rank_fusion`. Shared: `chart_theme` |
 | `data/processed/` | Outputs under 10 MB: the reader split, training likes per work, and the Book 2 and Book 3 result tables |
-| `data/samples/` | The first 100 records of each output over 10 MB: `book_dimension`, `interactions_sample_50k`, `open_library_match`, and the first 100 works of each neighbour table |
+| `data/samples/` | The first 100 records of each output over 10 MB: `book_dimension`, `interactions_sample_50k`, `open_library_match`, `similar_books` (Goodreads' "readers also enjoyed" links, the Book 2 benchmark), and the first 100 works of each neighbour table |
 | `docs/index.html` | The hosted explorer |
 | `requirements.txt` | Pinned packages for the Python 3.10 environment the notebooks ran in |
+| `02-scehlen-hookds-ohope_2026fall.pdf` | The project report |
+
+## Submission archive
+
+`02-scehlen-hookds-ohope_2026fall.zip` follows the course layout: the report and this README at the
+top level, all code in `src/`, all data in `src/data/`. The notebooks find the modules and data
+relative to the folder they are opened from, so they run unchanged from `src/`.
+
+```
+02-scehlen-hookds-ohope_2026fall.zip
+├── 02-scehlen-hookds-ohope_2026fall.pdf
+├── README.md
+└── src/
+    ├── Book 1 - Data Exploration, Cleaning, and Analysis.ipynb
+    ├── Book 2 - Modeling and Model Evaluation.ipynb
+    ├── Book 3 - Ranked Fusion Recommender.ipynb
+    ├── requirements.txt
+    ├── scripts/          the modules listed above
+    ├── docs/index.html   the explorer
+    └── data/
+        ├── processed/    outputs under 10 MB
+        └── samples/      first 100 records of each output over 10 MB
+```
 
 ## Data
 
