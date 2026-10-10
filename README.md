@@ -66,6 +66,7 @@ relative to the folder they are opened from, so they run unchanged from `src/`.
     ├── requirements.txt
     ├── scripts/          the modules listed above
     ├── docs/index.html   the explorer
+    ├── app/              the recommender app (NiceGUI) and its baked catalogue
     └── data/
         ├── processed/    outputs under 10 MB
         └── samples/      first 100 records of each output over 10 MB

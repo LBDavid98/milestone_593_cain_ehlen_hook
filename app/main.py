@@ -1,4 +1,11 @@
-"""One-screen recommender on Book 3's output: add books you've read, get five back with reasons."""
+"""One-screen recommender on Book 3's output: add books you've read, get five back with reasons.
+
+The screen has four parts: a shelf of books the visitor has read (search and add), a choice of
+recommendation source (the fused panel or one model), the five recommendations, and two charts that
+explain the selected pick. Every question goes through `recommend.py`; this module only draws.
+
+    python main.py      serves on $PORT (8000 if unset); the container sets 8080
+"""
 
 import os
 
@@ -11,6 +18,7 @@ YOURS_COLOUR = "#eb6834"  # always a book you have read
 
 
 def bar(label, value, text, colour, height=14):
+    """One labelled horizontal bar: `value` is the filled width in percent, `text` the figure on the right."""
     with ui.row().classes("w-full items-center gap-3 no-wrap"):
         ui.label(label).classes("w-44 text-right text-sm text-gray-600 shrink-0 truncate")
         with ui.element("div").classes("flex-grow rounded bg-gray-200").style(f"height: {height}px"):
@@ -20,6 +28,7 @@ def bar(label, value, text, colour, height=14):
 
 
 def paired_bars(label, top_value, bottom_value):
+    """Two stacked bars for one label: the pick (top, blue) against a shelf book (bottom, orange), in percent."""
     with ui.row().classes("w-full items-center gap-3 no-wrap"):
         ui.label(label).classes("w-44 text-right text-sm text-gray-600 shrink-0 truncate")
         with ui.column().classes("flex-grow gap-0.5"):
@@ -33,6 +42,7 @@ def paired_bars(label, top_value, bottom_value):
 
 @ui.page("/")
 def index():
+    """The page. State lives inside this function, so each visitor gets their own shelf."""
     ui.add_head_html('<meta name="viewport" content="width=device-width, initial-scale=1">')
     shelf: list[int] = []      # per visitor: catalogue positions of books read
     state = {"picks": [], "pick": None}
@@ -53,15 +63,18 @@ def index():
             chips = ui.row().classes("w-full gap-2 mt-2")
 
             def add(book):
+                """Put a search result on the shelf and clear the search box."""
                 shelf.append(book)
                 search.value = ""
                 refresh()
 
             def remove(book):
+                """Take a book off the shelf."""
                 shelf.remove(book)
                 refresh()
 
             def draw_results():
+                """List up to eight catalogue matches for the search term, each with an Add link."""
                 results.clear()
                 term = search.value or ""
                 if len(term.strip()) < 2:
@@ -81,6 +94,7 @@ def index():
                             ui.label("Add").classes("text-sm text-blue-600 shrink-0")
 
             def draw_chips():
+                """Show the shelf as removable chips."""
                 chips.clear()
                 with chips:
                     if not shelf:
@@ -110,22 +124,26 @@ def index():
           .classes("text-xs text-gray-500")
 
         def run():
+            """Ask for five recommendations for the current shelf and source, and select the first."""
             state["picks"] = rec.recommend(shelf, mode.value)
             state["pick"] = state["picks"][0] if state["picks"] else None
             draw_output()
 
         def choose(book):
+            """Select a recommendation so the charts below explain it."""
             state["pick"] = book
             draw_output()
 
         def refresh():
+            """Redraw everything that depends on the shelf."""
             draw_results()
             draw_chips()
             draw_output()
 
         def draw_output():
+            """Draw the recommendations and, for the selected one, the two explanation charts."""
             output.clear()
-            live = [b for b in state["picks"] if b not in shelf]
+            live = [b for b in state["picks"] if b not in shelf]   # a pick added to the shelf drops out
             if not live or not shelf:
                 with output:
                     ui.label("Add a book or two, then press Recommend.") \
@@ -152,6 +170,7 @@ def index():
                     ui.label("Where it ranks in the list for each book you've read. "
                              "A longer bar is a higher rank.") \
                       .classes("text-sm text-gray-600 mb-2")
+                    # Rank 1 fills the bar, rank 5 fills a fifth of it.
                     for book, rank in rec.reasons(pick, shelf, mode.value):
                         bar(rec.TITLES[book], round(100 * (rec.TOP_N + 1 - rank) / rec.TOP_N),
                             f"#{rank} of {rec.TOP_N}", PICK_COLOUR)
@@ -169,6 +188,7 @@ def index():
                     chart = ui.column().classes("w-full gap-1")
 
                     def redraw():
+                        """Draw the genre comparison against the shelf book chosen in the menu."""
                         chart.clear()
                         mine = rec.genre_shares(chooser.value)
                         theirs = rec.genre_shares(pick)
@@ -180,7 +200,7 @@ def index():
                                             f"width: 10px; height: 10px; background: {colour}")
                                         ui.label(rec.TITLES[book])
                             for i, genre in enumerate(rec.GENRES):
-                                if theirs[i] or mine[i]:
+                                if theirs[i] or mine[i]:   # skip genres neither book is shelved under
                                     paired_bars(genre, theirs[i], mine[i])
 
                     chooser.on_value_change(redraw)

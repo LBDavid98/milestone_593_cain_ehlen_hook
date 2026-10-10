@@ -28,6 +28,7 @@ SINGLES = {"jaccard": "Jaccard (likes)", "finished": "Finished together (shelves
 
 
 def main():
+    """Load Books 1-3's outputs, compute every work's top-five lists, and write catalogue.json."""
     books = pd.read_pickle(PROCESSED / "book_dimension.pkl")
     train_likes = pd.read_pickle(PROCESSED / "train_likes_per_work.pkl")
     work_ids = co.recommendable_works(train_likes, floor=MIN_LIKES)
@@ -35,6 +36,7 @@ def main():
     jaccard_tables = {name: tables[name] for name in ["Jaccard (likes)", "Finished together (shelves)"]}
     related = co.related_works(books, work_ids)
 
+    # Lists hold catalogue positions, not work_ids, which keeps the JSON small.
     position = {int(w): i for i, w in enumerate(work_ids)}
     lists = {"fused": [], **{key: [] for key in SINGLES}}
     for work_id in map(int, work_ids):

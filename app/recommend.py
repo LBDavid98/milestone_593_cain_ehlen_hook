@@ -1,4 +1,10 @@
-"""The only thing the screen calls. Loads Book 3's baked output once at startup."""
+"""The only thing the screen calls. Loads Book 3's baked output once at startup.
+
+`catalogue.json` (written by `build_data.py`) holds, for every recommendable work, its title, first
+author, training likes, genre weights and its top five under each source. Books are referred to by
+their position in those lists. With several books on the shelf, their lists are fused the same way
+Book 3 fuses models: reciprocal rank, k = 60.
+"""
 
 import json
 from pathlib import Path
@@ -9,7 +15,7 @@ GENRES = DATA["genres"]
 SEARCH_TEXT = [f"{t} {a}".lower() for t, a in zip(TITLES, AUTHORS)]
 RRF_K, TOP_N = 60, 5
 
-MODES = {
+MODES = {                    # source key in catalogue.json -> label in the menu
     "fused": "Panel: ranked fusion (both Jaccard models)",
     "jaccard": "Single model: Jaccard on likes",
     "finished": "Single model: finished together",
