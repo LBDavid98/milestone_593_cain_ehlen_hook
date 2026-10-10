@@ -17,8 +17,6 @@ reports/
 presentation/
 staging/
 
-# the submission archive is built from the repository, not tracked
-*.zip
 
 # local browser-test output and the Azure CLI deploy config
 .playwright-mcp/
