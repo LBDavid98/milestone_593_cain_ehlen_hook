@@ -19,6 +19,17 @@ many readers liked it and what share of its raters gave it 4–5 stars. Drag the
 minimum-likes floor, click a genre, type a title, hover for the books behind each cell. The
 bottom-right panel compares Goodreads' average rating (to 2017) with Open Library's (2026).
 
+## Recommender app
+
+**https://lbdavid98.github.io/milestone_593_cain_ehlen_hook/app/**
+
+Add books you've read and get five recommendations from Book 3's recommender (the two Jaccard models
+fused by rank), with the reason for each pick and a genre comparison against your books; a menu
+switches to any single model. The app (`app/`) is a NiceGUI screen in one container on Azure Container
+Apps. It scales to zero when idle, so the link above opens a page that shows a loading message while
+it wakes up (10–30 seconds), then forwards to the app. `app/build_data.py` bakes the recommender's
+output into the image; GitHub Actions rebuilds the image when `app/` changes.
+
 ## The notebooks
 
 | Notebook | What it does | Main outputs |
